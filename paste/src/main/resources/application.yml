@@ -1,0 +1,9 @@
+server:
+  port: 8081
+
+spring:
+  data:
+    mongodb:
+      database: pastebin
+      uri: mongodb://rootuser:rootpass@localhost:27017/pastebin?authSource=admin
+

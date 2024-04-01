@@ -1,5 +1,6 @@
-package org.example.api;
+package org.example.paste;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -10,8 +11,9 @@ import lombok.experimental.FieldDefaults;
 @Getter
 @Setter
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class PasteDto {
+public class PasteRequest {
     String data;
 
-    long expirationLengthInMinutes;
+    @JsonProperty("expiration")
+    PasteExpiration pasteExpiration;
 }
