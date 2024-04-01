@@ -1,0 +1,7 @@
+aws:
+  region: us-east-1
+  bucket-name: pastebin-files-bucket
+  key:
+
+server:
+  port: 8083
