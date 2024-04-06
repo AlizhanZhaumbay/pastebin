@@ -6,6 +6,9 @@ spring:
     mongodb:
       database: pastebin
       uri: mongodb://rootuser:rootpass@localhost:27017/pastebin?authSource=admin
+    redis:
+      host: localhost
+      port: 6379
   rabbitmq:
     addresses: localhost:5672
 
@@ -19,8 +22,19 @@ rabbitmq:
     paste-s3: paste-s3-routing-key
     paste-analytics:
       creation: paste-to-paste-info-creation-routing-key
-      visiting: paste-to-paste-info-visiting-routing-key
 
+cache:
+  name: pastes
+
+
+logging:
+  level:
+    org:
+    springframework:
+      cache:
+        DEBUG
+      data:
+        redis: DEBUG
 
 
 

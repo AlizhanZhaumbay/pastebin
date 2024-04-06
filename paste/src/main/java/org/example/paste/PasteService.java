@@ -6,7 +6,10 @@ import org.example.paste.client.HashGeneratorClient;
 import org.example.paste.client.PasteInfoClient;
 import org.example.paste.client.S3Client;
 import org.example.paste.paste_info.PasteInfoRequest;
+import org.example.paste.paste_info.PasteInfoResponse;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.Cache;
+import org.springframework.cache.CacheManager;
 import org.springframework.stereotype.Service;
 import org.example.paste.Paste.PasteBuilder;
 
@@ -28,6 +31,7 @@ public class PasteService {
     private final S3Client s3Client;
     private final PasteInfoClient pasteInfoClient;
     private final RabbitMQPasteProducer pasteProducer;
+    private final Cache cache;
 
     @Value("${rabbitmq.exchanges.paste-s3.name}")
     private String s3Exchange;
@@ -40,10 +44,6 @@ public class PasteService {
 
     @Value("${rabbitmq.routing-keys.paste-analytics.creation}")
     private String infoCreationRoutingKey;
-
-    @Value("${rabbitmq.routing-keys.paste-analytics.visiting}")
-    private String infoVisitingRoutingKey;
-
 
     private static final Map<PasteExpiration, Duration> EXPIRATION_INTERVALS;
 
@@ -93,27 +93,34 @@ public class PasteService {
     }
 
     public String loadPaste(String shortLink) {
+        String cachedPasteDataOptional = cache.get(shortLink, String.class);
+        if (cachedPasteDataOptional != null) {
+            return cachedPasteDataOptional;
+        }
+
         Optional<Paste> optionalPaste = pasteRepository.findByShortLink(shortLink);
 
         if (optionalPaste.isEmpty()) throw new PasteNotFoundException();
 
         Paste paste = optionalPaste.get();
-//        String pasteData = s3Client.loadPaste(shortLink);
+        String pasteData = s3Client.loadPaste(shortLink);
 
         PasteExpiration pasteExpiration = paste.getExpiration();
-//        if (pasteExpiration == null) return pasteData;
-        pasteProducer.send(
-                infoExchange,
-                infoVisitingRoutingKey,
-                shortLink
-        );
-        if (pasteExpiration.equals(PasteExpiration.BURN_AFTER_READ)) {
+        if (pasteExpiration != null && pasteExpiration.equals(PasteExpiration.BURN_AFTER_READ)) {
             pasteRepository.delete(paste);
             pasteInfoClient.deleteInfo(shortLink);
             s3Client.deletePaste(shortLink);
+            return pasteData;
         }
-        return "";
+        PasteInfoResponse pasteInfo = pasteInfoClient.loadInfo(shortLink);
+        Integer visited = pasteInfo.visited();
+
+        if (getVisitingCachingCondition(visited)) {
+            cache.put(shortLink, pasteData);
+        }
+        return pasteData;
     }
+
 
     private Date getExpirationDate(PasteExpiration pasteExpiration) {
         LocalDateTime currentTime = LocalDateTime.now();
@@ -132,7 +139,7 @@ public class PasteService {
     }
 
     public String pasteExists(String shortLink) {
-        if(!pasteRepository.existsByShortLink(shortLink)) throw new PasteNotFoundException();
+        if (!pasteRepository.existsByShortLink(shortLink)) throw new PasteNotFoundException();
         return "EXISTS";
     }
 
@@ -140,5 +147,9 @@ public class PasteService {
         int byteLength = data.getBytes().length;
 
         return (double) byteLength / 1024;
+    }
+
+    private boolean getVisitingCachingCondition(Integer visited) {
+        return visited > 5;
     }
 }
