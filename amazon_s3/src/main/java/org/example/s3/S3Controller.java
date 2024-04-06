@@ -1,6 +1,7 @@
 package org.example.s3;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -9,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
+@Log4j2
 @RequestMapping("/api/v1/s3")
 @RequiredArgsConstructor
 public class S3Controller {
@@ -43,6 +45,7 @@ public class S3Controller {
 
     @GetMapping("/load/{key}")
     public ResponseEntity<String> loadFile(@PathVariable("key") String key){
+        log.info("Requested file with key {}", key);
         return ResponseEntity.ok(new String(s3Service.getObject(bucketName, key)));
     }
 

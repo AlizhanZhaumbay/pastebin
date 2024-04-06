@@ -22,12 +22,9 @@ rabbitmq:
   queues:
     info-create:
       name: paste-info-create-queue
-    info-visit:
-      name: paste-info-visit-queue
   routing-keys:
     info-create:
       name: paste-to-paste-info-creation-routing-key
-    info-visit:
-      name: paste-to-paste-info-visiting-routing-key
+
 
 

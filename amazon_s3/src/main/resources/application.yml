@@ -12,6 +12,9 @@ spring:
 
 
 rabbitmq:
-  exchange: paste.files
-  queue: paste.sender
-  routing-key: paste_to_s3_routing-key
+  exchange:
+    name: paste-s3-exchange
+  queue:
+    name: paste-s3-sender
+  routing-key:
+    name: paste-s3-routing-key

@@ -9,6 +9,7 @@ import org.hibernate.annotations.ColumnDefault;
 @Data
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @AllArgsConstructor
+@NoArgsConstructor
 @Builder
 @Table(name = "paste_info")
 public class PasteInfo {

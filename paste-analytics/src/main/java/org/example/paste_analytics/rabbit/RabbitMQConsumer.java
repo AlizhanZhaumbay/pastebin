@@ -26,15 +26,4 @@ public class RabbitMQConsumer {
         log.info("Received request for creation {}", pasteInfoRequest);
         pasteInfoService.savePasteInfo(pasteInfoRequest);
     }
-
-    @RabbitListener(bindings = {
-            @QueueBinding(
-                    value = @Queue(durable = "true", value = "${rabbitmq.queues.info-visit.name}"),
-                    exchange = @Exchange("${rabbitmq.exchanges.paste-analytics}"),
-                    key = "${rabbitmq.routing-keys.info-visit.name}"
-            )})
-    public void visitInfo(String shortLink){
-        log.info("Received request for visiting{}", shortLink);
-        pasteInfoService.increaseVisitedCounter(shortLink);
-    }
 }

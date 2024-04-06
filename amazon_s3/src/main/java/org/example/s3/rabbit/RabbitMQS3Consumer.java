@@ -22,9 +22,9 @@ public class RabbitMQS3Consumer {
 
     @RabbitListener(bindings = {
             @QueueBinding(
-                    value = @Queue(durable = "true", value = "${rabbitmq.queue}"),
-                    exchange = @Exchange("${rabbitmq.exchange}"),
-                    key = "${rabbitmq.routing-key}"
+                    value = @Queue(durable = "true", value = "${rabbitmq.queue.name}"),
+                    exchange = @Exchange("${rabbitmq.exchange.name}"),
+                    key = "${rabbitmq.routing-key.name}"
     )})
     public void receiveFile(PasteRequest pasteRequest){
         log.info("Received payload");

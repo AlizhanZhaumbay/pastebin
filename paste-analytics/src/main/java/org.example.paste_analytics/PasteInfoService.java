@@ -23,6 +23,7 @@ public class PasteInfoService {
 
     public PasteInfoDTO loadPasteInfo(String pasteShortLink){
         checkPasteInfoExists(pasteShortLink);
+        increaseVisitedCounter(pasteShortLink);
         PasteInfo pasteInfo = pasteInfoRepository.findByPasteShortLink(pasteShortLink);
         return new PasteInfoDTO(pasteInfo.getCategory(), pasteInfo.getVisited(), pasteInfo.getPasteSize());
     }
