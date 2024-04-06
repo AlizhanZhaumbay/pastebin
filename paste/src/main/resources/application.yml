@@ -6,4 +6,23 @@ spring:
     mongodb:
       database: pastebin
       uri: mongodb://rootuser:rootpass@localhost:27017/pastebin?authSource=admin
+  rabbitmq:
+    addresses: localhost:5672
+
+rabbitmq:
+  exchanges:
+    paste-s3:
+      name: paste-s3-exchange
+    paste-analytics:
+      name: paste-analytics-exchange
+  routing-keys:
+    paste-s3: paste-s3-routing-key
+    paste-analytics:
+      creation: paste-to-paste-info-creation-routing-key
+      visiting: paste-to-paste-info-visiting-routing-key
+
+
+
+
+
 

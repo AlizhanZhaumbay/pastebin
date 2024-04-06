@@ -14,7 +14,9 @@ import java.util.Base64;
 @RequiredArgsConstructor
 public class HashGeneratorService {
     private final HashRepository hashRepository;
-    public String generateUniqueHash() {
+
+    public synchronized String generateUniqueHash() {
+        log.info("starting to generate a hash with thread {}...", Thread.currentThread().getName());
 
         UrlHash urlHash = hashRepository.save(new UrlHash());
         int length = 12;
@@ -34,6 +36,11 @@ public class HashGeneratorService {
 
         String finalHash = base64EncodedHash.substring(0, length);
         urlHash.setHash(finalHash);
+
+        hashRepository.flush();
+
+        log.info("ending to generate a hash with id {} with thread {}...", urlHash.getId(), Thread.currentThread().getName());
+
 
         return finalHash;
     }

@@ -1,0 +1,61 @@
+version: "3.8"
+services:
+  mongodb:
+    image: mongo
+    container_name: mongodb
+    ports:
+      - 27017:27017
+    volumes:
+      - data:/data
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=rootuser
+      - MONGO_INITDB_ROOT_PASSWORD=rootpass
+  mongo-express:
+    image: mongo-express
+    container_name: mongo-express
+    restart: always
+    ports:
+      - 8084:8081
+    environment:
+      - ME_CONFIG_MONGODB_ADMINUSERNAME=rootuser
+      - ME_CONFIG_MONGODB_ADMINPASSWORD=rootpass
+      - ME_CONFIG_MONGODB_SERVER=mongodb
+  rabbitmq:
+    image: rabbitmq:3-management
+    restart: always
+    container_name: rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+  postgres-hash-generator:
+    image: postgres:alpine3.19
+    restart: always
+    container_name: postgres-hash-generator
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: hash_generator
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres-hash-generator_data:/var/lib/postgresql/data
+  postgres-paste-info:
+    image: postgres:alpine3.19
+    restart: always
+    container_name: postgres-paste-info
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: paste-analytics
+    ports:
+      - "5434:5432"
+    volumes:
+      - postgres-paste-info_data:/var/lib/postgresql/data
+volumes:
+  data: { }
+  postgres-hash-generator_data: {}
+  postgres-paste-info_data: { }
+
+networks:
+  default:
+    name: mongodb_network

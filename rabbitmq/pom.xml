@@ -9,26 +9,16 @@
         <version>0.0.1-SNAPSHOT</version>
     </parent>
 
-    <dependencies>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-data-mongodb</artifactId>
-        </dependency>
+    <groupId>org.example</groupId>
+    <artifactId>rabbitmq</artifactId>
 
+    <dependencies>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-amqp</artifactId>
         </dependency>
-
-        <dependency>
-            <groupId>org.example</groupId>
-            <artifactId>rabbitmq</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
-        </dependency>
     </dependencies>
 
-    <groupId>org.example</groupId>
-    <artifactId>paste</artifactId>
 
     <properties>
         <maven.compiler.source>21</maven.compiler.source>

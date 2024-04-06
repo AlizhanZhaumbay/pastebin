@@ -16,4 +16,6 @@ public class PasteRequest {
 
     @JsonProperty("expiration")
     PasteExpiration pasteExpiration;
+
+    String category;
 }

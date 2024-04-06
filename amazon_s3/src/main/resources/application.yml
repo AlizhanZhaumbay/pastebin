@@ -5,3 +5,13 @@ aws:
 
 server:
   port: 8083
+
+spring:
+  rabbitmq:
+    addresses: localhost:5672
+
+
+rabbitmq:
+  exchange: paste.files
+  queue: paste.sender
+  routing-key: paste_to_s3_routing-key
