@@ -6,6 +6,8 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 
 public interface PasteInfoRepository extends JpaRepository<PasteInfo, Integer> {
 
@@ -25,4 +27,16 @@ public interface PasteInfoRepository extends JpaRepository<PasteInfo, Integer> {
     @Transactional
     @Modifying
     void deleteByPasteShortLink(String shortLink);
+
+    @Query(value = "select pasteShortLink from PasteInfo")
+    List<String> getAllPasteShortLinks();
+
+    @Transactional
+    @Modifying
+    @Query(value = "delete from PasteInfo where pasteShortLink in (:pasteShortLinks)")
+    void deleteAllInBatchByPasteShortLinks(List<String> pasteShortLinks);
+
+    @Query(value = "select distinct :pasteShortLinks from paste_info where paste_short_link not in (:pasteShortLinks)",
+            nativeQuery = true)
+    List<String> findAllNotExistingPasteShortLinks(List<String> pasteShortLinks);
 }

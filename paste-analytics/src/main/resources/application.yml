@@ -21,10 +21,11 @@ rabbitmq:
     paste-analytics: paste-analytics-exchange
   queues:
     info-create:
-      name: paste-info-create-queue
+      name: paste-info-creation-queue
+    info-delete:
+      name: paste-info-deletion-queue
   routing-keys:
     info-create:
       name: paste-to-paste-info-creation-routing-key
-
-
-
+    info-delete:
+      name: paste-to-paste-info-deletion-routing-key

@@ -5,6 +5,7 @@ import org.springframework.context.annotation.ComponentScans;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-@ComponentScans({@ComponentScan("org.example.amqp")})
+@ComponentScans({@ComponentScan("org.example.amqp"),
+@ComponentScan("org.example.validator")})
 public class PasteConfig {
 }

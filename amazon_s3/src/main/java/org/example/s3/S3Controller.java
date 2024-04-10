@@ -21,8 +21,8 @@ public class S3Controller {
 
     @PostMapping("/upload/{key}")
     public ResponseEntity<String> uploadFile(@PathVariable("key") String key,
-                                             @RequestBody String data){
-        s3Service.putObject(bucketName, key, data.getBytes());
+                                             @RequestBody S3Request s3Request){
+        s3Service.putObject(bucketName, key, s3Request);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
@@ -38,7 +38,7 @@ public class S3Controller {
         return ResponseEntity.status(HttpStatus.OK).build();
     }
 
-    @GetMapping("/load")
+    @GetMapping("/load/shortLinks")
     public ResponseEntity<List<String>> loadAllFiles(){
         return ResponseEntity.ok(s3Service.getObjectKeys(bucketName));
     }

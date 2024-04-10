@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.ComponentScans;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import software.amazon.awssdk.regions.Region;
@@ -12,7 +13,8 @@ import software.amazon.awssdk.services.s3.model.LifecycleExpiration;
 
 
 @Configuration
-@ComponentScan("org.example.amqp")
+@ComponentScans({@ComponentScan("org.example.amqp"),
+        @ComponentScan("org.example.validator")})
 @EnableScheduling
 @EnableFeignClients
 public class S3Config {

@@ -3,6 +3,7 @@ package org.example.s3;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import lombok.extern.slf4j.Slf4j;
+import org.example.validator.ObjectValidator;
 import org.springframework.stereotype.Service;
 import software.amazon.awssdk.core.ResponseInputStream;
 import software.amazon.awssdk.core.sync.RequestBody;
@@ -18,11 +19,17 @@ import java.util.stream.Collectors;
 @Log4j2
 public class S3Service {
     private final S3Client s3Client;
+    private final ObjectValidator<Object> validator;
+
+    public void putObject(String bucketName, String key, S3Request s3Request){
+        validator.validate(s3Request);
+        putObject(bucketName, key, s3Request.data().getBytes());
+    }
 
     public void putObject(String bucketName, String key, byte[] file) {
         String destinationKey = getDestinationKey(key);
         if (containsObject(bucketName, destinationKey)) {
-            throw new ObjectAlreadyExistsException();
+            throw new ObjectAlreadyExistsException(key);
         }
 
         PutObjectRequest putObjectRequest = PutObjectRequest.builder()
@@ -36,7 +43,7 @@ public class S3Service {
     public byte[] getObject(String bucketName, String key) {
         String destinationKey = getDestinationKey(key);
         if (!containsObject(bucketName, destinationKey)) {
-            throw new NoSuchObjectException();
+            throw new NoSuchObjectException(key);
         }
 
         GetObjectRequest getObjectRequest = GetObjectRequest.builder()
@@ -84,7 +91,7 @@ public class S3Service {
     public void deleteObject(String bucketName, String key) {
         String destinationKey = getDestinationKey(key);
         if (!containsObject(bucketName, destinationKey)) {
-            throw new NoSuchObjectException();
+            throw new NoSuchObjectException(key);
         }
         DeleteObjectRequest deleteObjectRequest = DeleteObjectRequest.builder()
                 .bucket(bucketName)

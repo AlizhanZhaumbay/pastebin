@@ -31,6 +31,6 @@ public enum PasteExpiration {
                 return pasteExpiration;
             }
         }
-        throw new IllegalArgumentException("Unknown expiration value: " + value);
+        throw new InvalidPasteExpirationException("Unknown expiration value: " + value);
     }
 }

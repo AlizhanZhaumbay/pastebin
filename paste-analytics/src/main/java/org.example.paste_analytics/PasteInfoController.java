@@ -5,6 +5,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("api/v1/paste-info")
 @RequiredArgsConstructor
@@ -15,6 +17,11 @@ public class PasteInfoController {
     @GetMapping("/{pasteShortLink}")
     public ResponseEntity<PasteInfoDTO> getPasteInfo(@PathVariable("pasteShortLink") String pasteShortLink){
         return ResponseEntity.ok(pasteInfoService.loadPasteInfo(pasteShortLink));
+    }
+
+    @GetMapping
+    public ResponseEntity<List<String>> getAllPasteInfoShortLinks(){
+        return ResponseEntity.ok(pasteInfoService.loadAllPasteInfoShortLinks());
     }
 
     @PostMapping("/{pasteShortLink}/visit")

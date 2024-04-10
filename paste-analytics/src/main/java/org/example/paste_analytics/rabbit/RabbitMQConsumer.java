@@ -10,6 +10,8 @@ import org.springframework.amqp.rabbit.annotation.QueueBinding;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+
 @Component
 @Slf4j
 @RequiredArgsConstructor
@@ -25,5 +27,16 @@ public class RabbitMQConsumer {
     public void receiveInfo(PasteInfoRequest pasteInfoRequest){
         log.info("Received request for creation {}", pasteInfoRequest);
         pasteInfoService.savePasteInfo(pasteInfoRequest);
+    }
+
+    @RabbitListener(bindings = {
+            @QueueBinding(
+                    value = @Queue(durable = "true", value = "${rabbitmq.queues.info-delete.name"),
+                    exchange = @Exchange("${rabbitmq.exchanges.paste-analytics}"),
+                    key = "${rabbitmq.routing-keys.info-delete.name}"
+            )})
+    public void receiveInfoDeletion(List<String> pasteShortLinks){
+        log.info("Received request for deletion {}", pasteShortLinks);
+        pasteInfoService.deletePasteInfos(pasteShortLinks);
     }
 }

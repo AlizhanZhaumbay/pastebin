@@ -7,13 +7,13 @@ import org.example.paste.client.PasteInfoClient;
 import org.example.paste.client.S3Client;
 import org.example.paste.paste_info.PasteInfoRequest;
 import org.example.paste.paste_info.PasteInfoResponse;
+import org.example.validator.ObjectValidator;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
 import org.springframework.stereotype.Service;
 import org.example.paste.Paste.PasteBuilder;
 
-import java.security.InvalidParameterException;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -39,20 +39,19 @@ public class PasteService {
     @Value("${rabbitmq.exchanges.paste-analytics.name}")
     private String infoExchange;
 
-    @Value("${rabbitmq.routing-keys.paste-s3}")
+    @Value("${rabbitmq.routing-keys.paste-s3.creation}")
     private String s3RoutingKey;
 
     @Value("${rabbitmq.routing-keys.paste-analytics.creation}")
     private String infoCreationRoutingKey;
 
+    private final ObjectValidator<PasteRequest> validator;
+
     private static final Map<PasteExpiration, Duration> EXPIRATION_INTERVALS;
-
     public String savePaste(PasteRequest pasteRequest) {
-        if (pasteRequest.getData() == null || pasteRequest.getData().isEmpty())
-            throw new InvalidParameterException("No data");
-
-        String shortLink = UUID.randomUUID().toString();
-//        String shortLink = hashGeneratorClient.createHash();
+        validator.validate(pasteRequest);
+//        String shortLink = UUID.randomUUID().toString();
+        String shortLink = hashGeneratorClient.createHash();
         PasteBuilder pasteBuilder = Paste.builder()
                 .shortLink(shortLink)
                 .createdAt(LocalDateTime.now());
@@ -133,7 +132,8 @@ public class PasteService {
     }
 
     static {
-        EXPIRATION_INTERVALS = Map.of(PasteExpiration.TEN_MINUTES, Duration.ofMinutes(10),
+        EXPIRATION_INTERVALS = Map.of(
+                PasteExpiration.TEN_MINUTES, Duration.ofMinutes(10),
                 PasteExpiration.ONE_HOUR, Duration.ofHours(1),
                 PasteExpiration.ONE_DAY, Duration.ofDays(1));
     }

@@ -17,7 +17,7 @@ public interface S3Client {
     @GetMapping("/load/{key}")
     String loadPaste(@PathVariable("key") String key);
 
-    @GetMapping("/load")
+    @GetMapping("/load/shortLinks")
     List<String> loadPasteShortLinks();
 
     @DeleteMapping("/delete/{key}")

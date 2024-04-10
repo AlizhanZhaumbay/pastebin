@@ -19,9 +19,12 @@ rabbitmq:
     paste-analytics:
       name: paste-analytics-exchange
   routing-keys:
-    paste-s3: paste-s3-routing-key
+    paste-s3:
+      creation: paste-s3-creation-routing-key
+      deletion: paste-s3-deletion-routing-key
     paste-analytics:
       creation: paste-to-paste-info-creation-routing-key
+      deletion: paste-to-paste-info-deletion-routing-key
 
 cache:
   name: pastes

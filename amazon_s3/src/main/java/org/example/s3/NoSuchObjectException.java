@@ -1,8 +1,12 @@
 package org.example.s3;
 
-import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.ResponseStatus;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 
-@ResponseStatus(value = HttpStatus.NOT_FOUND, reason = "Object is not exist.")
+@Getter
+@Setter
+@RequiredArgsConstructor
 public class NoSuchObjectException extends RuntimeException{
+    private final String key;
 }

@@ -8,11 +8,16 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 
+import java.util.List;
+
 @FeignClient(name = "pasteInfo", url = "localhost:8085/api/v1/paste-info")
 public interface PasteInfoClient {
 
     @GetMapping("/{shortLink}")
     PasteInfoResponse loadInfo(@PathVariable("shortLink") String shortLink);
+
+    @GetMapping
+    List<String> loadAllInfoShortLinks();
 
     @PostMapping("/{shortLink}/visit")
     void visitInfo(@PathVariable("shortLink") String shortLink);

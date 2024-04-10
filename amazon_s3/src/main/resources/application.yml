@@ -1,7 +1,6 @@
 aws:
   region: us-east-1
   bucket-name: pastebin-files-bucket
-  key:
 
 server:
   port: 8083
@@ -12,9 +11,12 @@ spring:
 
 
 rabbitmq:
-  exchange:
-    name: paste-s3-exchange
-  queue:
-    name: paste-s3-sender
-  routing-key:
-    name: paste-s3-routing-key
+  exchanges:
+    s3:
+      name: paste-s3-exchange
+  queues:
+    s3-create: paste-s3-sender
+    s3-delete: paste-s3-cleaner
+  routing-keys:
+    create: paste-s3-creation-routing-key
+    delete: paste-s3-deletion-routing-key

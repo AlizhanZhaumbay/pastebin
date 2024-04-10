@@ -11,6 +11,8 @@ import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+
 @Component
 @Slf4j
 @RequiredArgsConstructor
@@ -22,12 +24,23 @@ public class RabbitMQS3Consumer {
 
     @RabbitListener(bindings = {
             @QueueBinding(
-                    value = @Queue(durable = "true", value = "${rabbitmq.queue.name}"),
-                    exchange = @Exchange("${rabbitmq.exchange.name}"),
-                    key = "${rabbitmq.routing-key.name}"
+                    value = @Queue(durable = "true", value = "${rabbitmq.queues.s3-create}"),
+                    exchange = @Exchange("${rabbitmq.exchanges.s3.name}"),
+                    key = "${rabbitmq.routing-keys.create}"
     )})
     public void receiveFile(PasteRequest pasteRequest){
         log.info("Received payload");
         s3Service.putObject(bucketName, pasteRequest.getKey(), pasteRequest.getData().getBytes());
+    }
+
+    @RabbitListener(bindings = {
+            @QueueBinding(
+                    value = @Queue(durable = "true", value = "${rabbitmq.queues.s3-delete}"),
+                    exchange = @Exchange("${rabbitmq.exchanges.s3.name}"),
+                    key = "${rabbitmq.routing-keys.delete}"
+            )})
+    public void receiveFileDeletion(List<String> keys){
+        log.info("Received deletion payload");
+        s3Service.deleteObjects(bucketName, keys);
     }
 }
